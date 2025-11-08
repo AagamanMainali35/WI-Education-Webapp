@@ -258,309 +258,106 @@ project-root/
 
 ---
 
-## 🔌 Backend API Endpoints
+# 🔌 API Endpoints
 
-### 🔐 Authentication Endpoints
+## Authentication
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `/api/token/` | POST | ❌ | Get JWT token pair |
+| `/api/token/refresh/` | POST | ❌ | Refresh access token |
+| `/login/` | POST | ❌ | User authentication |
+| `/register/` | POST | ❌ | User registration |
+| `/api/send-email/` | POST | ❌ | Password reset email |
+| `/api/reset-password/` | POST | ❌ | Reset password |
 
-```http
-POST   /api/token/                    # Obtain JWT token pair
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Request:
-{
-  "email": "user@example.com",
-  "password": "securepassword"
-}
+## User Management
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `/api/createUser/` | POST | 🔑 Admin | Create new user |
+| `/api/get-user/{id}/` | GET | 🔑 User | Get user details |
+| `/api/getAlluser/` | GET | 🔑 Admin | List all users |
+| `/api/Update-user/{id}/` | PUT | 🔑 User | Update profile |
+| `/api/Chnagepassword/{id}/` | POST | 🔑 User | Change password |
 
-Response:
-{
-  "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
+## Exam Management
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `/enroll/` | POST | 🔑 User | Enroll in exam |
+| `/api/get-Exam/{id}/` | GET | 🔑 User | Get booking details |
+| `/api/getData/` | GET | 🔑 Admin | List all bookings |
+| `/api/Update-Exam/{id}/` | PUT | 🔑 User | Update booking |
+| `/api/Delete-Exam/{id}/` | DELETE | 🔑 User | Delete booking |
+| `/api/Checkexpiry/` | GET | 🔑 User | Check expiry status |
 
+## Payment Processing
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `/Payment/` | POST | 🔑 User | Initiate eSewa payment |
+| `/esewa/verify/` | POST | 🔑 User | Verify eSewa payment |
+| `/flywire/payment/` | POST | 🔑 User | Initiate Flywire payment |
+| `/flywire/verify/` | POST | 🔐 Signature | Verify Flywire payment |
 
-POST   /api/token/refresh/            # Refresh access token
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Request:
-{
-  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-
-Response:
-{
-  "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-
-
-POST   /login/                        # User login
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Request Body:  { email, password }
-Response:      { user_data, tokens }
-Auth:          ❌ Not Required
-
-
-POST   /register/                     # User registration
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Request Body:  { email, password, name, ... }
-Response:      { user_id, message }
-Auth:          ❌ Not Required
-
-
-POST   /api/send-email/               # Send password reset email
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Request Body:  { email }
-Response:      { message, token_sent }
-Auth:          ❌ Not Required
-
-
-POST   /api/reset-password/           # Reset password with token
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Request Body:  { token, new_password }
-Response:      { message }
-Auth:          ❌ Not Required
-```
-
-### 👥 User Management Endpoints
-
-```http
-POST   /api/createUser/               # Create new user (Admin)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Request Body:  { email, password, role, ... }
-Response:      { user_id, created }
-Auth:          ✅ Admin Token Required
-
-
-GET    /api/get-user/<int:id>/        # Get user by ID
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Response:      { user_details }
-Auth:          ✅ Token Required
-
-
-GET    /api/getAlluser/               # Get all users (Admin)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Response:      { users: [...], pagination }
-Auth:          ✅ Admin Token Required
-
-
-PUT    /api/Update-user/<int:id>/     # Update user profile
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Request Body:  { field: value, ... }
-Response:      { updated_user }
-Auth:          ✅ Token Required
-
-
-POST   /api/Chnagepassword/<int:id>/  # Change password
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Request Body:  { old_password, new_password }
-Response:      { message }
-Auth:          ✅ Token Required
-```
-
-### 📋 Exam Management Endpoints
-
-```http
-POST   /enroll/                       # Enroll in exam
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Request Body:  { exam_id, user_id, ... }
-Response:      { booking_id, status }
-Auth:          ✅ Token Required
-
-
-GET    /api/get-Exam/<int:booking_id>/ # Get exam booking details
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Response:      { booking_details, exam_info }
-Auth:          ✅ Token Required
-
-
-GET    /api/getData/                  # Get all exam bookings (Admin)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Response:      { bookings: [...], pagination }
-Auth:          ✅ Admin Token Required
-
-
-PUT    /api/Update-Exam/<int:booking_id>/ # Update exam booking
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Request Body:  { field: value, ... }
-Response:      { updated_booking }
-Auth:          ✅ Token Required
-
-
-DELETE /api/Delete-Exam/<int:booking_id>/ # Delete exam booking
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Response:      { message, deleted }
-Auth:          ✅ Token Required
-
-
-GET    /api/Checkexpiry/              # Check booking expiry status
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Response:      { expired: [...], active: [...] }
-Auth:          ✅ Token Required
-```
-
-### 💳 Payment Endpoints
-
-```http
-POST   /Payment/                      # Initiate eSewa payment
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Request Body:
-{
-  "booking_id": 123,
-  "amount": 5000,
-  "product_id": "EXAM-001"
-}
-
-Response:
-{
-  "payment_url": "https://esewa.com.np/epay/main",
-  "transaction_id": "TXN123456",
-  "status": "pending"
-}
-
-Auth:          ✅ Token Required
-Gateway:       eSewa (Nepal)
-
-
-POST   /esewa/verify/                 # Verify eSewa payment
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Request Body:  { oid, amt, refId }
-Response:      { verified, payment_details }
-Auth:          ✅ Token Required
-Gateway:       eSewa (Callback)
-
-
-POST   /flywire/payment/              # Initiate Flywire payment
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Request Body:
-{
-  "booking_id": 123,
-  "amount": 100,
-  "currency": "USD",
-  "payer_details": {...}
-}
-
-Response:
-{
-  "payment_url": "https://flywire.com/pay/...",
-  "transaction_id": "FW123456",
-  "status": "pending"
-}
-
-Auth:          ✅ Token Required
-Gateway:       Flywire (International)
-
-
-POST   /flywire/verify/               # Verify Flywire payment (Webhook)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Request Body:  { signature, payload }
-Response:      { verified, status }
-Auth:          🔐 Signature Verification
-Gateway:       Flywire (Webhook)
-```
-
-### 🔧 System Endpoints
-
-```http
-GET    /test/                         # API health check
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Response:      { status: "ok", timestamp }
-Auth:          ❌ Not Required
-
-
-GET    /admin/                        # Django admin panel
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Response:      Admin Interface
-Auth:          ✅ Admin Credentials Required
-```
+## System
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `/test/` | GET | ❌ | Health check |
+| `/admin/` | GET | 🔑 Admin | Admin panel |
 
 ---
 
-## 🗺️ Frontend Routes
+### 🔐 Authentication Levels:
+- **❌** - Public access
+- **🔑 User** - Authenticated users
+- **🔑 Admin** - Admin users only  
+- **🔐 Signature** - Webhook signature verification
 
-```javascript
-// App.js - Route Configuration
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+*All endpoints return appropriate HTTP status codes and standardized error responses.*
+---
 
-<Routes>
-  {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-  {/* PUBLIC ROUTES                                                */}
-  {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-  
-  <Route path="/"                   element={<Home />}>
-    {/* Landing page and application overview */}
-  </Route>
-  
-  <Route path="/login"              element={<Login />}>
-    {/* User authentication page */}
-  </Route>
-  
-  <Route path="/register"           element={<Register />}>
-    {/* New user registration form */}
-  </Route>
-  
-  <Route path="/forgot-password"    element={<Fp />}>
-    {/* Forgot password form */}
-  </Route>
-  
-  <Route path="/reset"              element={<Reset />}>
-    {/* Password reset page */}
-  </Route>
+# 🗺️ Frontend Routes
 
-  {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-  {/* USER ROUTES (Authentication Required)                       */}
-  {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-  
-  <Route path="/Exam"               element={<Exam />}>
-    {/* Exam booking and enrollment interface */}
-  </Route>
-  
-  <Route path="/Profile"            element={<Profile />}>
-    {/* User profile view and edit */}
-  </Route>
-  
-  <Route path="/payfee"             element={<UniPayment />}>
-    {/* Payment processing page (eSewa/Flywire) */}
-  </Route>
-  
-  <Route path="/Checklist"          element={<Checklist />}>
-    {/* Exam preparation checklist */}
-  </Route>
-  
-  <Route path="/top-Uni"            element={<Topuni />}>
-    {/* Top universities information */}
-  </Route>
+## Route Configuration
+| Route | Component | Access | Description |
+|-------|-----------|--------|-------------|
+| `/` | `Home` | 🌐 Public | Landing page & platform overview |
+| `/login` | `Login` | 🌐 Public | User authentication |
+| `/register` | `Register` | 🌐 Public | New user registration |
+| `/forgot-password` | `Fp` | 🌐 Public | Password recovery |
+| `/reset` | `Reset` | 🌐 Public | Password reset |
 
-  {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-  {/* ADMIN ROUTES (Admin Role Required)                          */}
-  {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-  
-  <Route path="/admin/dashboard"    element={<Admin />}>
-    {/* Administrative dashboard with overview */}
-  </Route>
-  
-  <Route path="/admin/users/all"    element={<UserM />}>
-    {/* User management interface */}
-  </Route>
-  
-  <Route path="/admin/users/add"    element={<Add />}>
-    {/* Add new user form */}
-  </Route>
+## User Routes
+| Route | Component | Access | Description |
+|-------|-----------|--------|-------------|
+| `/Exam` | `Exam` | 🔐 User | Exam booking & enrollment |
+| `/Profile` | `Profile` | 🔐 User | Profile management |
+| `/payfee` | `UniPayment` | 🔐 User | Payment processing |
+| `/Checklist` | `Checklist` | 🔐 User | Exam preparation |
+| `/top-Uni` | `Topuni` | 🔐 User | University information |
 
-  {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-  {/* UTILITY ROUTES                                               */}
-  {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-  
-  <Route path="/comp"               element={<Component />}>
-    {/* Component demonstration page */}
-  </Route>
-  
-  <Route path="/404"                element={<NotFound />}>
-    {/* 404 error page */}
-  </Route>
-  
-  <Route path="*"                   element={<NotFound />}>
-    {/* Catch-all for undefined routes */}
-  </Route>
-</Routes>
-```
+## Admin Routes
+| Route | Component | Access | Description |
+|-------|-----------|--------|-------------|
+| `/admin/dashboard` | `Admin` | ⚡ Admin | Administrative dashboard |
+| `/admin/users/all` | `UserM` | ⚡ Admin | User management |
+| `/admin/users/add` | `Add` | ⚡ Admin | Add new users |
+
+## Utility Routes
+| Route | Component | Access | Description |
+|-------|-----------|--------|-------------|
+| `/comp` | `Component` | 🛠️ Dev | Component library |
+| `/404` | `NotFound` | ❓ All | 404 error page |
+| `*` | `NotFound` | ❓ All | Catch-all route |
+
+---
+
+### 🔐 Access Levels:
+- **🌐 Public** - Accessible without authentication
+- **🔐 User** - Requires user login
+- **⚡ Admin** - Requires admin privileges  
+- **🛠️ Dev** - Development & testing
+- **❓ All** - Accessible from any route
+
+*All protected routes automatically redirect unauthenticated users to login page.*
 
 ### Route Summary Table
 
@@ -584,3 +381,33 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 │ /admin/users/all       │ UserM        │ Admin       │ User management          │
 │ /admin/users/add       │ Add          │ Admin       │ Add new user             │
 ├────────────────────────┼──────────────┼─────────────┼──────────────────────────┤
+
+```
+## ✨ Platform Overview
+A modern, full-stack exam booking platform built with React.js and Django REST Framework, providing seamless exam enrollment and management experience for students and administrators.
+# 🌐 Live Website Preview
+
+## 🚀 Live Demo
+**Website URL:** [merotestbooking.com](https://merotestbooking.com)
+
+## 📱 Website Screenshot
+[![image.png](https://i.postimg.cc/fTPvymTb/image.png)](https://postimg.cc/9rG9N493)
+
+### 🎯 Key Highlights
+- **Secure JWT Authentication**
+- **Dual Payment Gateway Integration** (eSewa + Flywire)
+- **Role-Based Access Control**
+- **Real-time Booking Management**
+- **Multi-Currency Support**
+- **Admin Dashboard & Analytics**
+
+### 🛠️ Tech Stack
+- **Frontend:** React.js, React Router, Modern CSS
+- **Backend:** Django REST Framework, JWT Authentication
+- **Payment:** eSewa & Flywire Integration
+- **Database:** PostgreSQL/SQLite
+- **Deployment:** Production-ready hosting
+
+---
+
+*Experience the platform live at [merotestbooking.com](https://merotestbooking.com)*
