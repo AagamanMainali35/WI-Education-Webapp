@@ -391,8 +391,8 @@ A modern, full-stack exam booking platform built with React.js and Django REST F
 **Website URL:** [merotestbooking.com](https://merotestbooking.com)
 
 ## 📱 Website Screenshot
-[![image.png](https://i.postimg.cc/fTPvymTb/image.png)](https://postimg.cc/9rG9N493)
-
+![Image](Images/Screenshot_4.png)
+![Image](Images/Screenshot_5.png)
 ### 🎯 Key Highlights
 - **Secure JWT Authentication**
 - **Dual Payment Gateway Integration** (eSewa + Flywire)
